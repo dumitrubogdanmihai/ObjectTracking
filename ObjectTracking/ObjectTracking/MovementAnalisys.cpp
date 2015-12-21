@@ -60,28 +60,87 @@ long long MovementAnalisys::dT()
 
 	return (long long)dT;
 }
-void MovementAnalisys::insert(Point &p)
+
+
+void MovementAnalisys::printAnalisys(Mat &m)
 {
-	long long dt = dT();
+	printAccelerationGraph();
+	printVelocityGraph();
+	for (int i = 1; i < state.p.size(); i++)
+	{
+		Point p1 = (state.valid[i-1] ? state.p[i-1] : state.predictP[i-1]);
+		Point p2 = (state.valid[i] ? state.p[i] : state.predictP[i]);
 
-	double v = velocity(lastP, p, dt);
+		if (state.valid[i])
+		{
+			circle(m, p2, 2, Scalar(0, 255, 0),1);
+			line(m, p1, p2, Scalar(0, 255, 0), 1);
+			try
+			{
+				//rectangle(m, state.r[i], Scalar(0, 255, 0), 2);
+			}
+			catch (int e)
+			{
 
-	lastA = acceleration(lastV, v, dt);
-	state.a.push_back(lastA);
+			};
+		}
+		else
+		{
+			circle(m, p2, 2, Scalar(0, 0, 255), 1);
+			line(m, p1, p2, Scalar(0, 0, 255), 1);
+			//rectangle(m, state.predictR[i], Scalar(0, 0, 255), 2);
+		}
+	}
+	imshow("Analisys", m);
+	waitKey(30);
+}
 
-	lastV = v;
-	state.v.push_back(lastV);
+
+void MovementAnalisys::insert(bool validPoint, Point &p, Rect &r)
+{
+	Point predP;
+	Rect predR;
+
+	kf.predict(predP, predR);
+	state.predictP.push_back(predP);
+	state.predictR.push_back(predR);
+
+	state.valid.push_back(validPoint);
+	
+	if (validPoint == false)
+	{
+		kf.update();
+
+		// TO DO: predict speed and move;
+		state.a.push_back(lastA);
+		state.v.push_back(lastV);
+		state.p.push_back(lastP);
+		return;
+	}
+	else
+	{
+		kf.update(p, r);
+
+		long long dt = dT();
+
+		double v = velocity(lastP, p, dt);
+
+		lastA = acceleration(lastV, v, dt);
+		state.a.push_back(lastA);
+
+		lastV = v;
+		state.v.push_back(lastV);
 
 
-	lastP = p;
-	state.p.push_back(lastP);
+		lastP = p;
+		state.p.push_back(lastP);
 
 
-	cout << "dt   " << dt << endl;
-	cout << "lP   " << lastP << endl;
-	cout << "lV   " << lastV << endl;
-	cout << "lA   " << lastA << endl << endl;
-
+		cout << "dt   " << dt << endl;
+		cout << "lP   " << lastP << endl;
+		cout << "lV   " << lastV << endl;
+		cout << "lA   " << lastA << endl << endl;
+	}
 }
 MovementAnalisys::~MovementAnalisys()
 {
@@ -146,7 +205,7 @@ void demoMA()
 
 	while (1)
 	{
-		MA.insert(Point(xM, yM));
+		MA.insert(true, Point(xM, yM), Rect(0,0,0,0));
 		MA.printAccelerationGraph();
 		MA.printVelocityGraph();
 

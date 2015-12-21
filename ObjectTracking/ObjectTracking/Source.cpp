@@ -34,8 +34,6 @@ bool found = false; // if the object was founded at least one time
 
 int main(int argc, char** argv)
 {
-	demoMA();
-
 	unsigned int frameCnt = 0;
 	Point predP;
 	Rect predR;
@@ -43,7 +41,7 @@ int main(int argc, char** argv)
 	CKalmanFilter kalmanFilter = CKalmanFilter();
 
 	//__FILE__/../Captures
-	String capFileName = "vid4.AVI";
+	String capFileName = "vid1.AVI";
 	String capPath = __FILE__;
 	capPath = capPath.substr(0, capPath.length() - String("\\ObjectTracking\\Source.cpp").length()) + "\\Captures\\" + capFileName;
 	cout << "Capture : " << "\"" + capPath + "\"" << endl << endl;
@@ -82,12 +80,15 @@ int main(int argc, char** argv)
 		//for (int j = 0; j < 140; j++)
 			cap.read(frame);
 	// main loop
+			MovementAnalisys ma;
 	while (1)
 	{
+		Mat frClone;
 		// if the selection process is not in progress
 		if (!clicked)
 		{
 			cap.read(frame);
+			frClone = frame.clone();
 			cout << endl << "   Frmae " << ++frameCnt << endl;
 			if (!frame.data)
 			{
@@ -108,6 +109,7 @@ int main(int argc, char** argv)
 						
 			if (objectFinded(contour, frame, pMin) == false || contour.size() < 4) // if the object wasn't finded/ it's contour is wrong
 			{
+				ma.insert();
 				kalmanFilter.update(); // update kalman without object's new coordinates
 
 				// expand the search to the whole frame
@@ -134,6 +136,7 @@ int main(int argc, char** argv)
 				p2 += pMin;
 
 				found = true;
+				ma.insert(true, Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2), Rect(p1, p2)); // update with new data
 				kalmanFilter.update(Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2), Rect(p1, p2)); // update with new data
 			}
 			cntr[0] = contour;//designated for contour printing (with OpenCV build-in "drawContours()" function)
@@ -162,8 +165,11 @@ int main(int argc, char** argv)
 			
 			// print in a separate window object's trajectory
 			kalmanFilter.printTrajectories(frame.size());
+			ma.printAnalisys(frClone);
+
 
 			imshow(mainWindow, frame); waitKey(30);
+
 		}
 		else
 		{

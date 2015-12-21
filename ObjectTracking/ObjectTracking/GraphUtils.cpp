@@ -163,15 +163,25 @@ IplImage* drawFloatGraph(const float *arraySrc, int nArrayLength, IplImage *imag
 	return imageGraph;
 }
 
-IplImage* drawDoubleGraph(std::vector<double>arraySrc, IplImage *imageDst, double minV, double maxV, int width, int height, char *graphLabel, bool showScale)
+// draw last 250 points of array
+IplImage* drawDoubleGraph(std::vector<double>&array, IplImage *imageDst, double minV, double maxV, int width, int height, char *graphLabel, bool showScale)
 {
+	vector<double>arraySrc;
+	int iStart = (array.size() > 250 ? array.size() - 300 : 0);
+	for (int i = iStart; i < array.size(); i++)
+	{
+		arraySrc.push_back(array[i]);
+	}
+	
+	
 	int nArrayLength = arraySrc.size();
 
 	int w = width;
 	int h = height;
 	int b = 10;		// border around graph within the image
 	if (w <= 20)
-		w = nArrayLength + b * 2;	// width of the image
+		w = nArrayLength*3 + b * 2;	// width of the image
+//	w = 600;
 	if (h <= 20)
 		h = 220;
 

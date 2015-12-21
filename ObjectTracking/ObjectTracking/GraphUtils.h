@@ -33,7 +33,7 @@ extern "C"
 	// Draw the graph of an array of floats into imageDst or a new image, between minV & maxV if given.
 	// Remember to free the newly created image if imageDst is not given.
 	IplImage* drawFloatGraph(const float *arraySrc, int nArrayLength, IplImage *imageDst DEFAULT(0), float minV DEFAULT(0.0), float maxV DEFAULT(0.0), int width DEFAULT(0), int height DEFAULT(0), char *graphLabel DEFAULT(0), bool showScale DEFAULT(true));
-	IplImage* drawDoubleGraph(std::vector<double>arraySrc, IplImage *imageDst DEFAULT(0), double minV DEFAULT(0.0), double maxV DEFAULT(0.0), int width DEFAULT(0), int height DEFAULT(0), char *graphLabel DEFAULT(0), bool showScale DEFAULT(true));
+	IplImage* drawDoubleGraph(std::vector<double>&array, IplImage *imageDst DEFAULT(0), double minV DEFAULT(0.0), double maxV DEFAULT(0.0), int width DEFAULT(0), int height DEFAULT(0), char *graphLabel DEFAULT(0), bool showScale DEFAULT(true));
 
 	
 	// Draw the graph of an array of ints into imageDst or a new image, between minV & maxV if given.
