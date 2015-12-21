@@ -2,11 +2,28 @@
 #include "Helper.h"
 #include <iostream>
 #include "opencv2/imgproc/imgproc.hpp" // contourArea
-
+#include <ctime>
 
 using namespace cv;
 using namespace std;
 
+
+long long difTime()
+{
+	static clock_t lastClock;
+	clock_t dT = clock() - lastClock;
+	lastClock = clock();
+
+	return (long long)dT;
+}
+long long difTime2()
+{
+	static clock_t lastClock;
+	clock_t dT = clock() - lastClock;
+	lastClock = clock();
+
+	return (long long)dT;
+}
 
 int areaOf(Point &p1, Point &p2)
 {
@@ -17,7 +34,6 @@ int areaOf(Point &p1, Point &p2)
 	contour.push_back(p2);
 	contour.push_back(Point(p1.x, p2.y));
 	return contourArea(contour);
-
 }
 
 Rect boundPoints(int exp, Point& p1, Point& p2, Point &pMinRez, Point &pMaxRez, Mat &frame)
@@ -67,7 +83,7 @@ void minNormalRect(vector<Point> &contour, Point& min, Point &max)
 	max = Point(xMax, yMax);
 }
 
-Mat cropSelectedObject(Mat & source, vector<Point> contour)
+Mat cropSelectedObject(Mat & source, vector<Point> contour, bool printObjRect)
 {
 	// computing convexHull of contour points
 	vector<vector<Point>> hull(1);
@@ -87,6 +103,9 @@ Mat cropSelectedObject(Mat & source, vector<Point> contour)
 	minNormalRect(hull[0], p1, p2);
 
 	Mat croppedObj = maskedObj(Rect(p1, p2));
+
+	if (printObjRect)
+		cout << "Object rectangle ( " << p1 << ", " << p2 << " )" << endl;
 
 	return croppedObj;
 }

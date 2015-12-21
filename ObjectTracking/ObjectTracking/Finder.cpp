@@ -15,6 +15,10 @@ void detectKeypoints(Mat &obj, Mat &sce, vector<KeyPoint> & keyp_obj, vector<Key
 
 bool objectFinded(vector<Point>contour, Mat &frame, Point &decal)
 {
+	if (contour.size() < 4)
+	{
+		return false;
+	}
 	if (contourArea(contour) < 15)
 	{
 		cout << "Contour area < 15" << endl << endl;
@@ -28,10 +32,6 @@ bool objectFinded(vector<Point>contour, Mat &frame, Point &decal)
 		return false;
 	}
 
-	if(contour.size() < 4 )
-	{
-		return false;
-	}
 
 	for (int j = 0; j < 4; j++)
 	{
@@ -139,7 +139,7 @@ vector<Point> findObj(Mat &img_object, Mat &img_scene)
 	}
 	if (good_matches.size() < 5)
 	{
-		cout << "good_matches size : " << good_matches.size() << endl << endl;
+		cout << "Good_matches vector size : " << good_matches.size() << endl << endl;
 		return objectFrame;
 	}
 	

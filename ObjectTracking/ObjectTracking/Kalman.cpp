@@ -16,6 +16,14 @@ void CKalmanFilter::update(Point object, Rect objectBox)
 	}
 	else
 	{
+
+		static double precTick = ticks;
+		double ticks = (double)cv::getTickCount();
+		dT = (ticks - precTick) / cv::getTickFrequency(); //seconds
+		cout << dT << endl;
+		cout << ticks << endl;
+		cout << precTick << endl;
+
 		objV.push_back(object);
 
 		notFoundCount = 0;
