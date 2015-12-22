@@ -13,42 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Movement Analysis">
+      <UniqueIdentifier>{5b665bac-7278-433b-8548-6f1a57229672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Movement Analysis">
+      <UniqueIdentifier>{a2c31fb9-1a55-4a17-80fb-ba86894a326e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object Tracker">
+      <UniqueIdentifier>{f36cf3c3-558f-41e9-b145-beb048341861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object Tracker">
+      <UniqueIdentifier>{14f132eb-fc6a-4e14-a8fd-35b8a109236e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Finder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Helper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Kalman.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphUtils.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="MovementAnalysis.cpp">
+      <Filter>Source Files\Movement Analysis</Filter>
     </ClCompile>
-    <ClCompile Include="MovementAnalisys.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Kalman.cpp">
+      <Filter>Source Files\Movement Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphUtils.cpp">
+      <Filter>Source Files\Movement Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTracker.cpp">
+      <Filter>Source Files\Object Tracker</Filter>
+    </ClCompile>
+    <ClCompile Include="Helper.cpp">
+      <Filter>Source Files\Object Tracker</Filter>
+    </ClCompile>
+    <ClCompile Include="Finder.cpp">
+      <Filter>Source Files\Object Tracker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Finder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Kalman.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="MovementAnalysis.h">
+      <Filter>Header Files\Movement Analysis</Filter>
     </ClInclude>
     <ClInclude Include="GraphUtils.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Movement Analysis</Filter>
     </ClInclude>
-    <ClInclude Include="MovementAnalisys.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Kalman.h">
+      <Filter>Header Files\Movement Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper.h">
+      <Filter>Header Files\Object Tracker</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTracker.h">
+      <Filter>Header Files\Object Tracker</Filter>
+    </ClInclude>
+    <ClInclude Include="Finder.h">
+      <Filter>Header Files\Object Tracker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

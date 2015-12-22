@@ -83,7 +83,8 @@
     <ClCompile Include="GraphUtils.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Kalman.cpp" />
-    <ClCompile Include="MovementAnalisys.cpp" />
+    <ClCompile Include="MovementAnalysis.cpp" />
+    <ClCompile Include="ObjectTracker.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -91,7 +92,8 @@
     <ClInclude Include="GraphUtils.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Kalman.h" />
-    <ClInclude Include="MovementAnalisys.h" />
+    <ClInclude Include="MovementAnalysis.h" />
+    <ClInclude Include="ObjectTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

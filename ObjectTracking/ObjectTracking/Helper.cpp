@@ -4,6 +4,7 @@
 #include "opencv2/imgproc/imgproc.hpp" // contourArea
 #include <ctime>
 
+
 using namespace cv;
 using namespace std;
 
@@ -36,7 +37,7 @@ int areaOf(Point &p1, Point &p2)
 	return contourArea(contour);
 }
 
-Rect boundPoints(int exp, Point& p1, Point& p2, Point &pMinRez, Point &pMaxRez, Mat &frame)
+Rect boundPoints(Point p1, Point p2, int exp, Point &pMinRez, Point &pMaxRez, Mat &frame)
 {
 	if (p1 == p2)
 	{
@@ -82,6 +83,35 @@ void minNormalRect(vector<Point> &contour, Point& min, Point &max)
 	min = Point(xMin, yMin);
 	max = Point(xMax, yMax);
 }
+
+
+void getRectAndCenter(const vector<Point> &contour, Point &centerC, Rect &rectC)
+{
+	// values for center of contour
+	int xAvg = 0;
+	int yAvg = 0;
+
+	// values for minimum square rectangle
+	int xMin = contour[0].x;
+	int xMax = 0;
+	int yMin = contour[0].y;
+	int yMax = 0;
+
+	for (int j = 0; j < contour.size(); j++)
+	{
+		xAvg += contour[j].x;
+		yAvg += contour[j].y;
+
+		contour[j].x < xMin ? xMin = contour[j].x : 0;
+		contour[j].x > xMax ? xMax = contour[j].x : 0;
+		contour[j].y < yMin ? yMin = contour[j].y : 0;
+		contour[j].y > yMax ? yMax = contour[j].y : 0;
+	}
+
+	centerC = Point(xAvg / contour.size(), yAvg / contour.size());
+	rectC = Rect( Point(xMin, yMin), Point(xMax, yMax));
+}
+
 
 Mat cropSelectedObject(Mat & source, vector<Point> contour, bool printObjRect)
 {
