@@ -1,9 +1,11 @@
+#include "Object.h"
 #include "ObjectTracker.h"
+#include "ObjectFinder.h"
 
 #include "Helper.h"
 #include "Finder.h"
 
-
+/*
 ObjectTracker::ObjectTracker(Mat &obj)
 {
 	this->obj = obj.clone();
@@ -11,6 +13,15 @@ ObjectTracker::ObjectTracker(Mat &obj)
 	foundedInLastFrame = false;
 	foundedAtLeastOnce = false;
 }
+*/
+ObjectTracker::ObjectTracker(Object &obj)
+{
+	this->object = obj;
+
+	foundedInLastFrame = false;
+	foundedAtLeastOnce = false;
+}
+
 ObjectTracker::ObjectTracker()
 {
 	foundedInLastFrame = false;
@@ -29,7 +40,6 @@ void ObjectTracker::insertFrame(Mat &frame)
 
 	foundedAtLeastOnce ? MA.getPred(predC, predR) : 0;
 
-
 	// set searchedArea
 	if (foundedInLastFrame)
 	{
@@ -47,8 +57,9 @@ void ObjectTracker::insertFrame(Mat &frame)
 	}
 		
 	// search object
-	contour = findObj(obj, searchedArea); // TRY to : find the object and extract his contour
-
+	//contour = findObj(obj, searchedArea); // TRY to : find the object and extract his contour
+	finder.find(object, frame, contour);
+	
 	// NOT FINDED
 	if (objectFinded(contour, frame, pMin) == false || contour.size() < 4)
 	{
@@ -71,7 +82,7 @@ void ObjectTracker::insertFrame(Mat &frame)
 		predicted = false;
 
 		//  decalate contour to point to the whole frame
-		for (int j = 0; j < contour.size(); j++)
+		for (unsigned int j = 0; j < contour.size(); j++)
 		{
 			contour[j].x += pMin.x;
 			contour[j].y += pMin.y;

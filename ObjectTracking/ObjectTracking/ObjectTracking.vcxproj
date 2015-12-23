@@ -84,6 +84,8 @@
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Kalman.cpp" />
     <ClCompile Include="MovementAnalysis.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjectFinder.cpp" />
     <ClCompile Include="ObjectTracker.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
@@ -93,6 +95,8 @@
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Kalman.h" />
     <ClInclude Include="MovementAnalysis.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectFinder.h" />
     <ClInclude Include="ObjectTracker.h" />
   </ItemGroup>
   <ItemGroup>

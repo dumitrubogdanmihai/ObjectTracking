@@ -15,6 +15,7 @@
 #include "Finder.h"
 #include "Kalman.h"
 #include "ObjectTracker.h"
+#include "Object.h"
 
 
 using namespace cv;
@@ -26,21 +27,26 @@ void MouseCallBack(int event, int x, int y, int flags, void* userdata);
 char *mainWindow("Window");
 
 Mat frame;
-Mat object;
-ObjectTracker trk;
+
+int trkCnt = 0;
+
+ObjectTracker trk[10];
 
 int main(int argc, char** argv)
 {
+	unsigned int frameCnt = 0;
+
 	namedWindow(mainWindow);
 	setMouseCallback(mainWindow, MouseCallBack, NULL);
 
-	//__FILE__/../Captures
+
+
+	//computes the following path for source videos : __FILE__/../Captures
 	String capFileName = "vid4.AVI";
 	String capPath = __FILE__;
 	capPath = capPath.substr(0, capPath.length() - String("\\ObjectTracking\\Source.cpp").length()) + "\\Captures\\" + capFileName;
 	cout << "Capture : " << "\"" + capPath + "\"" << endl << endl;
-	//capPath = "C:\\Users\\BOGDAN\\Desktop\\DCIM\\103NIKON\\DSCN1026.AVI";
-	
+		
 	VideoCapture cap(0); 	//Source video
 	
 	if (cap.isOpened() == false)
@@ -48,36 +54,31 @@ int main(int argc, char** argv)
 		cout << "Capture missing!" << endl;
 		return 1;
 	}
-
-
+	
+	frameCnt++;
 	cap.read(frame);
-
-	//object = frame(Rect(Point(118, 73), Point(191, 170))).clone(); // skipping manual object selection by mouse
-	//	imshow(searchedObjectWindow, object);
-	//	waitKey(30);
-
-
-		// skipping first x trivial frames
-		//for (int j = 0; j < 140; j++)
-			//cap.read(frame);
 
 	while (1)
 	{
 		// if the selection process is not in progress
 		if (!clicked)
 		{
+			frameCnt++;
 			cap.read(frame);
 			if (!frame.data)
 			{
 				return 0;
 			}
+
+			cout << endl  << "FRAME " << frameCnt << endl;
+
+			for (int i = 0; i < trkCnt; i++)
+			{
+				trk[i].insertFrame(frame);
+				trk[i].highlightObject(frame, true, true, true);
+			}
 		}
-		if (object.data) // if exists an object designed to be seached
-		{
-			trk.insertFrame(frame);
-			trk.highlightObject(frame, true, true, true);
-		}
-		
+
 		imshow(mainWindow, frame);
 
 		if (waitKey(30) == 27)
@@ -93,48 +94,53 @@ void MouseCallBack(int event, int x, int y, int flags, void* userdata) // design
 
 	if (event == EVENT_LBUTTONDOWN)
 	{
-		if (object.data)
+		if (trkCnt > 8)
 		{
 			return;
 		}
 
 		clicked = true;
-		cout << "Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+		cout << "Beginning process of selection for object number " << trkCnt + 1 << endl;
+		cout << "   Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
 		initialFrame = frame.clone();
 	}
 	else if (event == EVENT_LBUTTONUP)
 	{
 		if (clicked == false)
 			return;
-
-		clicked = false;
-		cout << "Left button of the mouse is unclicked - position (" << x << ", " << y << ")" << endl << endl;
-		object = cropSelectedObject(initialFrame, contours[0], true);
-				
-		imshow("Object", object);
 		
-		trk = ObjectTracker(object);
+		char cntStr[3];
+		_itoa_s(trkCnt + 1, cntStr, 3, 10);
+		String objectWindowName = "Object ";
+		objectWindowName += cntStr;
+		
+		Mat object;
+		
+		clicked = false;
+		cout << "   Left button of the mouse is unclicked - position (" << x << ", " << y << ")" << endl << endl;
+		
+		object = cropSelectedObject(initialFrame, contours[0], true);
+		imshow(objectWindowName, object);
+		
+		contours[0].clear();
+
+		Object obj(object);
+		trk[trkCnt] = ObjectTracker(obj);
+		
+		trkCnt++;
 
 		waitKey(30);
 	}
 	else if (clicked && event == EVENT_MOUSEMOVE)
 	{
-		if (contours[0].size() == 0)
+		if (contours[0].size() != 0)
 		{
-			contours[0].push_back(Point(x, y));
-			circle(object, Point(x, y), 2, Scalar(255, 0, 0), 4, 8);
-			cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+			line(frame, contours[0].back(), Point(x, y), Scalar(255, 0, 0), 3);
 		}
-		else
+		if (contours[0].size() == 0 || (contours[0][contours[0].size() - 1].x != x || contours[0][contours[0].size() - 1].y != y))
 		{
-			if (contours[0][contours[0].size() - 1].x != x || contours[0][contours[0].size() - 1].y != y)
-			{
-				line(frame, contours[0][contours[0].size() - 1], Point(x, y), Scalar(255, 0, 0), 3);
-				contours[0].push_back(Point(x, y));
-				
-				circle(object, Point(x, y), 2, Scalar(255, 0, 0), 4, 8);
-				cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
-			}
+			cout << "   Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+			contours[0].push_back(Point(x, y));
 		}
 	}
 }

@@ -168,7 +168,7 @@ IplImage* drawDoubleGraph(std::vector<double>&array, IplImage *imageDst, double 
 {
 	vector<double>arraySrc;
 	int iStart = (array.size() > 250 ? array.size() - 300 : 0);
-	for (int i = iStart; i < array.size(); i++)
+	for (unsigned int i = iStart; i < array.size(); i++)
 	{
 		arraySrc.push_back(array[i]);
 	}

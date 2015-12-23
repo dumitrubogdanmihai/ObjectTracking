@@ -26,7 +26,7 @@ long long difTime2()
 	return (long long)dT;
 }
 
-int areaOf(Point &p1, Point &p2)
+double areaOf(Point &p1, Point &p2)
 {
 
 	vector<Point> contour;
@@ -73,7 +73,7 @@ void minNormalRect(vector<Point> &contour, Point& min, Point &max)
 	int xMax = 0;
 	int yMin = contour[0].y;
 	int yMax = 0;
-	for (int j = 0; j < contour.size(); j++)
+	for (unsigned int j = 0; j < contour.size(); j++)
 	{
 		contour[j].x < xMin ? xMin = contour[j].x : 0;
 		contour[j].x > xMax ? xMax = contour[j].x : 0;
@@ -97,7 +97,7 @@ void getRectAndCenter(const vector<Point> &contour, Point &centerC, Rect &rectC)
 	int yMin = contour[0].y;
 	int yMax = 0;
 
-	for (int j = 0; j < contour.size(); j++)
+	for (unsigned int j = 0; j < contour.size(); j++)
 	{
 		xAvg += contour[j].x;
 		yAvg += contour[j].y;
@@ -140,7 +140,8 @@ Mat cropSelectedObject(Mat & source, vector<Point> contour, bool printObjRect)
 	return croppedObj;
 }
 
-bool in(int n, int a, int b)
+template <typename T>
+bool in(T n, T a, T b)
 {
 	if (n >= a && n <= b)
 		return true;

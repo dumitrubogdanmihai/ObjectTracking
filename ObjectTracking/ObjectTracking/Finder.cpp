@@ -131,7 +131,7 @@ vector<Point> findObj(Mat &img_object, Mat &img_scene)
 	std::vector<Point2f> obj;
 	std::vector<Point2f> scene;
 
-	for (int i = 0; i < good_matches.size(); i++)
+	for (unsigned int i = 0; i < good_matches.size(); i++)
 	{
 		//-- Get the keypoints from the good matches
 		obj.push_back(keypoints_object[good_matches[i].queryIdx].pt);
