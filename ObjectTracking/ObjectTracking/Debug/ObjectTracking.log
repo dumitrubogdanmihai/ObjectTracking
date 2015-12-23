@@ -1,33 +1,31 @@
-﻿Build started 23.12.2015 21:57:46.
+﻿Build started 23.12.2015 22:09:55.
      1>Project "C:\Users\BOGDAN\Documents\GitHub\ObjectTracking\ObjectTracking\ObjectTracking\ObjectTracking.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\opencv\opcv2.4.11\opencv\build\x86\vc12\..\..\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Object.cpp ObjectFinder.cpp ObjectTracker.cpp Source.cpp
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\opencv\opcv2.4.11\opencv\build\x86\vc12\..\..\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Finder.cpp Helper.cpp ObjectTracker.cpp Source.cpp
          Source.cpp
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.h(14): error C2061: syntax error : identifier 'Object'
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.h(14): error C2535: 'ObjectTracker::ObjectTracker(void)' : member function already defined or declared
-                 c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.h(12) : see declaration of 'ObjectTracker::ObjectTracker'
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.h(25): error C2146: syntax error : missing ';' before identifier 'finder'
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.h(25): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.h(26): error C2146: syntax error : missing ';' before identifier 'object'
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.h(26): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objectfinder.h(27): error C2061: syntax error : identifier 'Object'
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\source.cpp(128): error C2440: '<function-style-cast>' : cannot convert from 'Object' to 'ObjectTracker'
-                 No constructor could take the source type, or constructor overload resolution was ambiguous
          ObjectTracker.cpp
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objectfinder.h(27): error C2061: syntax error : identifier 'Object'
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objecttracker.cpp(61): error C2660: 'ObjectFinder::find' : function does not take 3 arguments
-         Object.cpp
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objectfinder.h(27): error C2061: syntax error : identifier 'Object'
          Generating Code...
          Compiling...
-         ObjectFinder.cpp
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objectfinder.cpp(119): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objectfinder.cpp(120): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objectfinder.cpp(121): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\objectfinder.cpp(122): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+         Helper.cpp
+         Finder.cpp
+     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\finder.cpp(165): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\finder.cpp(166): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\finder.cpp(167): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\bogdan\documents\github\objecttracking\objecttracking\objecttracking\finder.cpp(168): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
          Generating Code...
-     1>Done Building Project "C:\Users\BOGDAN\Documents\GitHub\ObjectTracking\ObjectTracking\ObjectTracking\ObjectTracking.vcxproj" (Build target(s)) -- FAILED.
+       Link:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\BOGDAN\Documents\GitHub\ObjectTracking\ObjectTracking\Debug\ObjectTracking.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\opencv\opcv2.4.11\opencv\build\x86\vc12\lib opencv_calib3d2411d.lib opencv_contrib2411d.lib opencv_core2411d.lib opencv_features2d2411d.lib opencv_flann2411d.lib opencv_gpu2411d.lib opencv_highgui2411d.lib opencv_imgproc2411d.lib opencv_legacy2411d.lib opencv_ml2411d.lib opencv_nonfree2411d.lib opencv_objdetect2411d.lib opencv_photo2411d.lib opencv_stitching2411d.lib opencv_ts2411d.lib opencv_video2411d.lib opencv_videostab2411d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\BOGDAN\Documents\GitHub\ObjectTracking\ObjectTracking\Debug\ObjectTracking.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\BOGDAN\Documents\GitHub\ObjectTracking\ObjectTracking\Debug\ObjectTracking.lib" /MACHINE:X86 Debug\Finder.obj
+         Debug\GraphUtils.obj
+         Debug\Helper.obj
+         Debug\Kalman.obj
+         Debug\MovementAnalysis.obj
+         Debug\Object.obj
+         Debug\ObjectFinder.obj
+         Debug\ObjectTracker.obj
+         Debug\Source.obj
+         ObjectTracking.vcxproj -> C:\Users\BOGDAN\Documents\GitHub\ObjectTracking\ObjectTracking\Debug\ObjectTracking.exe
+     1>Done Building Project "C:\Users\BOGDAN\Documents\GitHub\ObjectTracking\ObjectTracking\ObjectTracking\ObjectTracking.vcxproj" (Build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:09.30
+Time Elapsed 00:00:05.41

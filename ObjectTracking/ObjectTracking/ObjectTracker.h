@@ -2,6 +2,7 @@
 
 #include "opencv2\highgui\highgui.hpp"
 #include "MovementAnalysis.h"
+#include "ObjectFinder.h"
 
 using namespace std;
 using namespace cv;
@@ -10,7 +11,6 @@ class ObjectTracker
 {
 public:
 	ObjectTracker();
-	//ObjectTracker(Mat &obj);
 	ObjectTracker(Object &obj);
 	void insertFrame(Mat &frame);
 	void getInfo(bool &founded, bool &predicted, Point &c, Rect &r);

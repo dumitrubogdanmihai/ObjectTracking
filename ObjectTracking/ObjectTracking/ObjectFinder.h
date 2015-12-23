@@ -15,6 +15,8 @@
 using namespace std;
 using namespace cv;
 
+class Object;
+
 class ObjectFinder
 {
 public:

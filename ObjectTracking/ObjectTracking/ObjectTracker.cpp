@@ -1,19 +1,10 @@
-#include "Object.h"
 #include "ObjectTracker.h"
 #include "ObjectFinder.h"
+#include "Object.h"
 
 #include "Helper.h"
 #include "Finder.h"
 
-/*
-ObjectTracker::ObjectTracker(Mat &obj)
-{
-	this->obj = obj.clone();
-
-	foundedInLastFrame = false;
-	foundedAtLeastOnce = false;
-}
-*/
 ObjectTracker::ObjectTracker(Object &obj)
 {
 	this->object = obj;
