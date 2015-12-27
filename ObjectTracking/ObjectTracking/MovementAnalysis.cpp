@@ -1,3 +1,5 @@
+
+#include <string.h>
 #include "MovementAnalysis.h"
 
 #include "opencv2/highgui/highgui.hpp"
@@ -20,88 +22,17 @@ MovementAnalysis::MovementAnalysis()
 	lastV = 0;
 }
 
-void MovementAnalysis::printVelocityGraph()
+MovementAnalysis::~MovementAnalysis()
 {
-	IplImage  * imgV = NULL;
-
-	//cvSet(imgV, CV_RGB(255, 255, 255));
-
-	imgV = drawDoubleGraph(state.v, imgV);
-
-	Mat velGraph = Mat(imgV);
-	
-	imshow("Velocity Graph", velGraph);
-	waitKey(1);
-
-	cvReleaseImage(&imgV);
+	cout << "MovementAnalysis class destructor was called!" << endl;
 }
-
-void MovementAnalysis::printAccelerationGraph()
-{
-	IplImage  * imgA = NULL;
-
-	//cvSet(imgV, CV_RGB(255, 255, 255));
-
-	imgA = drawDoubleGraph(state.a, imgA);
-
-	Mat accGraph = Mat(imgA);
-
-	imshow("Acceleration Graph", accGraph);
-	waitKey(1);
-	
-	cvReleaseImage(&imgA);
-}
-
-long long MovementAnalysis::dT()
-{
-	static clock_t lastClock;
-	clock_t dT = clock() - lastClock;
-	lastClock = clock();
-
-	return (long long)dT;
-}
-
-
-void MovementAnalysis::printAnalisys(Mat &m)
-{
-	printAccelerationGraph();
-	printVelocityGraph();
-	for (int i = 1; i < state.p.size(); i++)
-	{
-		Point p1 = (state.valid[i-1] ? state.p[i-1] : state.predictP[i-1]);
-		Point p2 = (state.valid[i] ? state.p[i] : state.predictP[i]);
-
-		if (state.valid[i])
-		{
-			circle(m, p2, 2, Scalar(0, 255, 0),1);
-			line(m, p1, p2, Scalar(0, 255, 0), 1);
-			try
-			{
-				//rectangle(m, state.r[i], Scalar(0, 255, 0), 2);
-			}
-			catch (int e)
-			{
-
-			};
-		}
-		else
-		{
-			circle(m, p2, 2, Scalar(0, 0, 255), 1);
-			line(m, p1, p2, Scalar(0, 0, 255), 1);
-			//rectangle(m, state.predictR[i], Scalar(0, 0, 255), 2);
-		}
-	}
-	imshow("Analisys", m);
-	waitKey(30);
-}
-
 
 void MovementAnalysis::insert(bool validPoint, Point &p, Rect &r)
 {
 	Point predP;
 	Rect predR;
 
-	kf.predict(predP, predR);
+	kf.getPredict(predP, predR);
 	state.predictP.push_back(predP);
 	state.predictR.push_back(predR);
 
@@ -111,11 +42,10 @@ void MovementAnalysis::insert(bool validPoint, Point &p, Rect &r)
 	{
 		kf.update();
 
-		// TO DO: predict speed and move;
+		// TO DO: using velocity and acceleration predict object's position, together with kalman filter 
 		state.a.push_back(lastA);
 		state.v.push_back(lastV);
 		state.p.push_back(lastP);
-		return;
 	}
 	else
 	{
@@ -131,42 +61,122 @@ void MovementAnalysis::insert(bool validPoint, Point &p, Rect &r)
 		lastV = v;
 		state.v.push_back(lastV);
 
-
 		lastP = p;
 		state.p.push_back(lastP);
-
-
-		cout << "dt   " << dt << endl;
-		cout << "lP   " << lastP << endl;
-		cout << "lV   " << lastV << endl;
-		cout << "lA   " << lastA << endl << endl;
 	}
 }
-MovementAnalysis::~MovementAnalysis()
+
+void MovementAnalysis::getPred(Point &c, Rect &r)
 {
+	c = state.predictP.back();
+	r = state.predictR.back();
 }
+
+void MovementAnalysis::printAnalisys(Mat &m)
+{
+	Scalar color;
+	Point p1;
+	Point p2;
+
+	printAccelerationGraph();
+	printVelocityGraph();
+
+	for (int i = 1; i < state.p.size(); i++)
+	{
+
+		if (state.valid[i])
+		{
+			color = Scalar(0, 255, 0);
+		}
+		else
+		{
+			color = Scalar(0, 0, 255);
+		}
+
+		p1 = (state.valid[i-1] ? state.p[i-1] : state.predictP[i-1]);
+		p2 = (state.valid[i] ? state.p[i] : state.predictP[i]);
+
+		circle(m, p2, 2, color, 1);
+		line(m, p1, p2, color, 1);
+		//rectangle(m, state.predictR[i], color, 2);
+	}
+	imshow("Analisys", m);
+	waitKey(30);
+}
+
+void MovementAnalysis::printVelocityGraph(char *windowName)
+{
+	char wind[30] = "Velocity Graph";
+	if(windowName != NULL)
+	{
+		strcat_s(wind, " - ");
+		strcat_s(wind, windowName);
+	}
+
+	IplImage  * imgV = NULL;
+
+	imgV = drawDoubleGraph(state.v, imgV);
+
+	Mat velGraph = Mat(imgV);
+	
+	imshow(wind, velGraph);
+	waitKey(1);
+
+	cvReleaseImage(&imgV);
+}
+
+void MovementAnalysis::printAccelerationGraph(char *windowName)
+{
+	char wind[30] = "Acceleration Graph";
+	if (windowName != NULL)
+	{
+		strcat_s(wind,  " - ");
+		strcat_s(wind,  windowName);
+	}
+
+	IplImage  * imgA = NULL;
+
+	imgA = drawDoubleGraph(state.a, imgA);
+
+	Mat accGraph = Mat(imgA);
+
+	imshow(wind, accGraph);
+	waitKey(1);
+	
+	cvReleaseImage(&imgA);
+}
+
+
+long long MovementAnalysis::dT()
+{
+	static clock_t lastClock;
+	clock_t dT = clock() - lastClock;
+	lastClock = clock();
+
+	return (long long)dT;
+}
+
 double MovementAnalysis::velocity(Point &p1, Point &p2, long long difT)
 {
 	double dst = cv::norm(p1 - p2);
-	//cout << "dist     = " << dst << "	pixels " << endl;
-	//cout << "dif time = " << difT << "	  miliseconds " <<  endl;
+
 	double speed = dst / difT * 1000;
+	
 	return speed;
 }
 
 double MovementAnalysis::acceleration(double &v1, double &v2, long long difT)
 {
 	double dst = v2 - v1;
-	//cout << "dist     = " << dst << "	p/s " << endl;
-	//cout << "dif time = " << difT << "	  miliseconds " << endl;
+
 	double accel = dst / difT * 1000;
+	
 	return accel;
 }
 
 
 
-
-
+// variables and functions used for demo 
 int xM, yM;
 bool clickedd;
 void clickHandle(int event, int x, int y, int flags, void* userdata) // designed for manual selecting of object contour
@@ -188,14 +198,6 @@ void clickHandle(int event, int x, int y, int flags, void* userdata) // designed
 		yM = y;
 	}
 }
-
-
-void MovementAnalysis::getPred(Point &c, Rect &r)
-{
-	c = state.predictP.back();
-	r = state.predictR.back();
-}
-
 
 void demoMA()
 {

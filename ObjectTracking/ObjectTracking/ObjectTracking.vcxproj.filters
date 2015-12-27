@@ -19,12 +19,6 @@
     <Filter Include="Source Files\Movement Analysis">
       <UniqueIdentifier>{a2c31fb9-1a55-4a17-80fb-ba86894a326e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Object Tracker">
-      <UniqueIdentifier>{f36cf3c3-558f-41e9-b145-beb048341861}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Object Tracker">
-      <UniqueIdentifier>{14f132eb-fc6a-4e14-a8fd-35b8a109236e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -39,19 +33,16 @@
     <ClCompile Include="GraphUtils.cpp">
       <Filter>Source Files\Movement Analysis</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectTracker.cpp">
-      <Filter>Source Files\Object Tracker</Filter>
-    </ClCompile>
-    <ClCompile Include="Helper.cpp">
-      <Filter>Source Files\Object Tracker</Filter>
-    </ClCompile>
-    <ClCompile Include="Finder.cpp">
-      <Filter>Source Files\Object Tracker</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,19 +56,16 @@
     <ClInclude Include="Kalman.h">
       <Filter>Header Files\Movement Analysis</Filter>
     </ClInclude>
-    <ClInclude Include="Helper.h">
-      <Filter>Header Files\Object Tracker</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectTracker.h">
-      <Filter>Header Files\Object Tracker</Filter>
-    </ClInclude>
-    <ClInclude Include="Finder.h">
-      <Filter>Header Files\Object Tracker</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectFinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

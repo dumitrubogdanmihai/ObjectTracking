@@ -1,36 +1,28 @@
+// Object Tracker - OOP Project
+// opencv 2.4.11
+
 #include"stdafx.h"
-#include <stdio.h>
-#include <iostream>
-#include "opencv2/core/core.hpp"
-#include "opencv2/features2d/features2d.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/calib3d/calib3d.hpp"
-#include "opencv2/nonfree/nonfree.hpp"
-#include "opencv2/imgproc/imgproc.hpp" // convex Hull
 
-#include "GraphUtils.h"
-#include "MovementAnalysis.h"
+#include<string.h>
 
-#include "Helper.h"
-#include "Finder.h"
-#include "Kalman.h"
 #include "ObjectTracker.h"
-#include "Object.h"
+#include "Helper.h" // crop object
 
-
-using namespace cv;
-using namespace std;
+using std::cout;
 
 bool clicked = false;
+
+// to select the object using the mouse
 void MouseCallBack(int event, int x, int y, int flags, void* userdata);
 
+// main window where video capture are played 
+//	an object can be selected from this window simply by dragging his contour by mouse
 char *mainWindow("Window");
 
+// where each frame from video capture are stored
 Mat frame;
 
-int trkCnt = 0;
-
-ObjectTracker trk[10];
+vector<ObjectTracker> trk;
 
 int main(int argc, char** argv)
 {
@@ -39,15 +31,13 @@ int main(int argc, char** argv)
 	namedWindow(mainWindow);
 	setMouseCallback(mainWindow, MouseCallBack, NULL);
 
-
-
-	//computes the following path for source videos : __FILE__/../Captures
-	String capFileName = "vid4.AVI";
+	//computes the following path for source videos : __FILE__/../Captures/capFileName
 	String capPath = __FILE__;
+	String capFileName = "vid4.AVI";
 	capPath = capPath.substr(0, capPath.length() - String("\\ObjectTracking\\Source.cpp").length()) + "\\Captures\\" + capFileName;
 	cout << "Capture : " << "\"" + capPath + "\"" << endl << endl;
 		
-	VideoCapture cap(0); 	//Source video
+	VideoCapture cap(capPath); 	//Source video
 	
 	if (cap.isOpened() == false)
 	{
@@ -71,12 +61,16 @@ int main(int argc, char** argv)
 			}
 
 			cout << endl  << "FRAME " << frameCnt << endl;
+			
+			for_each(trk.begin(), trk.end(),
+				[](ObjectTracker& tracker)
+				{
+					tracker.insertFrame(frame);
+					tracker.highlightObject(frame, true, true, true);
+					tracker.showExtraInfo();
+				}
+			);
 
-			for (int i = 0; i < trkCnt; i++)
-			{
-				trk[i].insertFrame(frame);
-				trk[i].highlightObject(frame, true, true, true);
-			}
 		}
 
 		imshow(mainWindow, frame);
@@ -94,14 +88,11 @@ void MouseCallBack(int event, int x, int y, int flags, void* userdata) // design
 
 	if (event == EVENT_LBUTTONDOWN)
 	{
-		if (trkCnt > 8)
-		{
-			return;
-		}
-
-		clicked = true;
-		cout << "Beginning process of selection for object number " << trkCnt + 1 << endl;
+		cout << "Beginning process of selection for object number " << trk.size() + 1 << endl;
 		cout << "   Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+		
+		clicked = true;
+		
 		initialFrame = frame.clone();
 	}
 	else if (event == EVENT_LBUTTONUP)
@@ -109,27 +100,26 @@ void MouseCallBack(int event, int x, int y, int flags, void* userdata) // design
 		if (clicked == false)
 			return;
 		
-		char cntStr[3];
-		_itoa_s(trkCnt + 1, cntStr, 3, 10);
-		String objectWindowName = "Object ";
-		objectWindowName += cntStr;
-		
-		Mat object;
-		
-		clicked = false;
 		cout << "   Left button of the mouse is unclicked - position (" << x << ", " << y << ")" << endl << endl;
 		
-		object = cropSelectedObject(initialFrame, contours[0], true);
-		imshow(objectWindowName, object);
+		Mat objectMat;
+		char objectName[12] = "Object ";
+		char cntStr[3];
+
+		clicked = false;
+		
+		_itoa_s(trk.size() + 1, cntStr, 3, 10);
+		strcat_s(objectName, 12, cntStr);
+				
+		objectMat = cropSelectedObject(initialFrame, contours[0]);
+				
+
+		Object obj(objectMat, objectName);
+		obj.print();
+
+		trk.push_back(ObjectTracker(obj));
 		
 		contours[0].clear();
-
-		Object obj(object);
-		trk[trkCnt] = ObjectTracker(obj);
-		
-		trkCnt++;
-
-		waitKey(30);
 	}
 	else if (clicked && event == EVENT_MOUSEMOVE)
 	{
@@ -137,6 +127,7 @@ void MouseCallBack(int event, int x, int y, int flags, void* userdata) // design
 		{
 			line(frame, contours[0].back(), Point(x, y), Scalar(255, 0, 0), 3);
 		}
+
 		if (contours[0].size() == 0 || (contours[0][contours[0].size() - 1].x != x || contours[0][contours[0].size() - 1].y != y))
 		{
 			cout << "   Mouse move over the window - position (" << x << ", " << y << ")" << endl;

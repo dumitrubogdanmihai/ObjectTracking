@@ -2,28 +2,52 @@
 #include "Helper.h"
 #include <iostream>
 #include "opencv2/imgproc/imgproc.hpp" // contourArea
-#include <ctime>
-
 
 using namespace cv;
 using namespace std;
 
-
-long long difTime()
+void minNormalRect(vector<Point> &contour, Point& min, Point &max)
 {
-	static clock_t lastClock;
-	clock_t dT = clock() - lastClock;
-	lastClock = clock();
-
-	return (long long)dT;
+	int xMin = contour[0].x;
+	int xMax = 0;
+	int yMin = contour[0].y;
+	int yMax = 0;
+	for (unsigned int j = 0; j < contour.size(); j++)
+	{
+		contour[j].x < xMin ? xMin = contour[j].x : 0;
+		contour[j].x > xMax ? xMax = contour[j].x : 0;
+		contour[j].y < yMin ? yMin = contour[j].y : 0;
+		contour[j].y > yMax ? yMax = contour[j].y : 0;
+	}
+	min = Point(xMin, yMin);
+	max = Point(xMax, yMax);
 }
-long long difTime2()
-{
-	static clock_t lastClock;
-	clock_t dT = clock() - lastClock;
-	lastClock = clock();
 
-	return (long long)dT;
+void getRectAndCenter(const vector<Point> &contour, Point &centerC, Rect &rectC)
+{
+	// values for center of contour
+	int xAvg = 0;
+	int yAvg = 0;
+
+	// values for minimum square rectangle
+	int xMin = contour[0].x;
+	int xMax = 0;
+	int yMin = contour[0].y;
+	int yMax = 0;
+
+	for (unsigned int j = 0; j < contour.size(); j++)
+	{
+		xAvg += contour[j].x;
+		yAvg += contour[j].y;
+
+		contour[j].x < xMin ? xMin = contour[j].x : 0;
+		contour[j].x > xMax ? xMax = contour[j].x : 0;
+		contour[j].y < yMin ? yMin = contour[j].y : 0;
+		contour[j].y > yMax ? yMax = contour[j].y : 0;
+	}
+
+	centerC = Point(xAvg / contour.size(), yAvg / contour.size());
+	rectC = Rect( Point(xMin, yMin), Point(xMax, yMax));
 }
 
 double areaOf(Point &p1, Point &p2)
@@ -67,53 +91,7 @@ Rect boundPoints(Point p1, Point p2, int exp, Point &pMinRez, Point &pMaxRez, Ma
 	return Rect(pMinRez, pMaxRez);
 }
 
-void minNormalRect(vector<Point> &contour, Point& min, Point &max)
-{
-	int xMin = contour[0].x;
-	int xMax = 0;
-	int yMin = contour[0].y;
-	int yMax = 0;
-	for (unsigned int j = 0; j < contour.size(); j++)
-	{
-		contour[j].x < xMin ? xMin = contour[j].x : 0;
-		contour[j].x > xMax ? xMax = contour[j].x : 0;
-		contour[j].y < yMin ? yMin = contour[j].y : 0;
-		contour[j].y > yMax ? yMax = contour[j].y : 0;
-	}
-	min = Point(xMin, yMin);
-	max = Point(xMax, yMax);
-}
-
-
-void getRectAndCenter(const vector<Point> &contour, Point &centerC, Rect &rectC)
-{
-	// values for center of contour
-	int xAvg = 0;
-	int yAvg = 0;
-
-	// values for minimum square rectangle
-	int xMin = contour[0].x;
-	int xMax = 0;
-	int yMin = contour[0].y;
-	int yMax = 0;
-
-	for (unsigned int j = 0; j < contour.size(); j++)
-	{
-		xAvg += contour[j].x;
-		yAvg += contour[j].y;
-
-		contour[j].x < xMin ? xMin = contour[j].x : 0;
-		contour[j].x > xMax ? xMax = contour[j].x : 0;
-		contour[j].y < yMin ? yMin = contour[j].y : 0;
-		contour[j].y > yMax ? yMax = contour[j].y : 0;
-	}
-
-	centerC = Point(xAvg / contour.size(), yAvg / contour.size());
-	rectC = Rect( Point(xMin, yMin), Point(xMax, yMax));
-}
-
-
-Mat cropSelectedObject(Mat & source, vector<Point> contour, bool printObjRect)
+Mat cropSelectedObject(Mat & source, vector<Point> &contour, bool applyMask)
 {
 	// computing convexHull of contour points
 	vector<vector<Point>> hull(1);
@@ -125,8 +103,8 @@ Mat cropSelectedObject(Mat & source, vector<Point> contour, bool printObjRect)
 	Mat maskedObj = Mat::zeros(src.size(), src.type());
 	drawContours(mask, hull, 0, Scalar(255, 255, 255), CV_FILLED, 8, vector<Vec4i>(), 0, Point());
 
-	//src.copyTo(maskedObj, mask);
-	maskedObj = src.clone();
+
+	applyMask ? src.copyTo(maskedObj, mask) : maskedObj = src.clone();
 
 	// Find min square
 	Point p1, p2;
@@ -134,12 +112,11 @@ Mat cropSelectedObject(Mat & source, vector<Point> contour, bool printObjRect)
 
 	Mat croppedObj = maskedObj(Rect(p1, p2));
 
-	if (printObjRect)
-		cout << "Object rectangle ( " << p1 << ", " << p2 << " )" << endl;
-
 	return croppedObj;
 }
 
+// n >= a && n <= b or 
+// n >= b && n <= a
 template <typename T>
 bool in(T n, T a, T b)
 {
@@ -168,17 +145,4 @@ bool intersection(Point2f o1, Point2f p1, Point2f o2, Point2f p2)
 	if (in(r.x, o2.x, p2.x) && in(r.y, o2.y, p2.y))
 		return true;
 	return false;
-}
-
-
-void drawDetails(Mat &frame, vector<vector<Point>> &cntr, Scalar &cntrClr, Rect &rect, Point &p1, Point &p2, Point &pmin, Point &pmax)
-{
-	rectangle(frame, rect, Scalar(255, 0, 0), 2);
-
-	drawContours(frame, cntr, 0, cntrClr, 2);
-
-	putText(frame, "p1", p1, FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200, 200, 250), 1, CV_AA);
-	putText(frame, "p2", p2, FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200, 200, 250), 1, CV_AA);
-	putText(frame, "pMin", pmin, FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200, 200, 250), 1, CV_AA);
-	putText(frame, "pMax", pmax, FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200, 200, 250), 1, CV_AA);
 }

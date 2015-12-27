@@ -79,7 +79,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Finder.cpp" />
     <ClCompile Include="GraphUtils.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Kalman.cpp" />
@@ -90,7 +89,6 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Finder.h" />
     <ClInclude Include="GraphUtils.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Kalman.h" />

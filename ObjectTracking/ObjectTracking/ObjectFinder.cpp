@@ -1,33 +1,19 @@
 #include "ObjectFinder.h"
+#include "Helper.h"
 
+using std::cout;
 
-ObjectFinder::ObjectFinder()
+ObjectFinder::ObjectFinder(int minHessian)
 {
-	int minHessian = 400;
 	detector = SurfFeatureDetector(minHessian);
 }
 
 ObjectFinder::~ObjectFinder()
 {
+	cout << "ObjectFinder class destructor was called!" << std::endl;
 }
 
-
-vector<KeyPoint> ObjectFinder::detectKeypoints(Mat &m)
-{
-	vector<KeyPoint> keyp;
-
-	detector.detect(m, keyp);
-
-	return keyp;
-}
-Mat ObjectFinder::calculateDescriptors(vector<KeyPoint> keypoints, Mat &m)
-{
-	Mat descriptors;
-	extractor.compute(m, keypoints, descriptors);
-	return descriptors;
-}
-
-bool ObjectFinder::find(Object &obj, Mat &scene, vector<Point> &contourRez)
+void ObjectFinder::find(Object const  &obj, Mat &scene, vector<Point> &contourRez)
 {
 	contourRez.clear();
 
@@ -94,7 +80,7 @@ bool ObjectFinder::find(Object &obj, Mat &scene, vector<Point> &contourRez)
 	if (good_matches.size() < 5)
 	{
 		cout << "Good_matches vector size : " << good_matches.size() << endl << endl;
-		return false;
+		return;
 	}
 
 	Mat H = findHomography(objV, sceneV, CV_RANSAC);
@@ -121,5 +107,79 @@ bool ObjectFinder::find(Object &obj, Mat &scene, vector<Point> &contourRez)
 	contourRez.push_back(Point(scene_corners[2].x, scene_corners[2].y));
 	contourRez.push_back(Point(scene_corners[3].x, scene_corners[3].y));
 
+	return;
+}
+
+bool ObjectFinder::objectFinded(vector<Point> const &contour, Mat const  &frame, Point const &decal)
+{
+	if (contour.size() < 4)
+	{
+		return false;
+	}
+	if (contourArea(contour) < 15)
+	{
+		cout << "Contour area < 15" << endl << endl;
+		return false;
+	}
+
+	if (intersection(contour[0], contour[1], contour[2], contour[3]))
+	{
+		cout << "Diagonals are intersecting" << endl << endl;
+		//cout << contour << endl;
+		return false;
+	}
+
+
+	for (int j = 0; j < 4; j++)
+	{
+		if (contour[j].x + decal.x < 0)
+		{
+			cout << "Object unfinded! " << endl;
+			cout << " Contour out of limits : ";
+			//	cout << " x= " << contour[j].x + decal.x << endl << endl;
+			return false;
+		}
+		else if (contour[j].x + decal.x > frame.cols)
+		{
+			cout << "Object unfinded! " << endl;
+			cout << " Contour out of limits : ";
+			//	cout << " x= " << contour[j].x + decal.x << endl << endl;
+			return false;
+		}
+		else if (contour[j].y + decal.y < 0)
+		{
+			cout << "Object unfinded! " << endl;
+			cout << " Contour out of limits : ";
+			//	cout << " y= " << contour[j].y + decal.y << endl << endl;
+			return false;
+		}
+		else if (contour[j].y + decal.y > frame.rows)
+		{
+			cout << "Object unfinded! " << endl;
+			cout << " Contour out of limits : ";
+			//	cout << " y= " << contour[j].y + decal.y << endl << endl;
+			return false;
+		}
+	}
+
+	cout << "Object finded! " << endl;
 	return true;
+}
+
+vector<KeyPoint> ObjectFinder::detectKeypoints(Mat &m)
+{
+	vector<KeyPoint> keyp;
+
+	detector.detect(m, keyp);
+
+	return keyp;
+}
+
+Mat ObjectFinder::calculateDescriptors(vector<KeyPoint> &keypoints, Mat &m)
+{
+	Mat descriptors;
+
+	extractor.compute(m, keypoints, descriptors);
+
+	return descriptors;
 }
