@@ -35,7 +35,7 @@
  
  If you have any trouble to configure opencv you can consult a full guide from [here](https://marcomuraresearch.wordpress.com/2015/04/16/install-opencv-visual-studio/).
 
-## Further work
+## TODO
  1. Multithreading support
  2. Adaptive object's frame
 
