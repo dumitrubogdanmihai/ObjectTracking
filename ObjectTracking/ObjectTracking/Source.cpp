@@ -10,85 +10,82 @@
 
 using std::cout;
 
+// left mouse button is pressed 
+// selecting an object is in the process
 bool clicked = false;
+
+// main window where video captures are played 
+//	to track an object from this window select his contour with the left mouse button pressed
+char *mainWindow("Window");
+
+// store each frame from video stream 
+Mat frame;
+
+// where all active trackers are stored
+vector<ObjectTracker> trackers;
 
 // to select the object using the mouse
 void MouseCallBack(int event, int x, int y, int flags, void* userdata);
 
-// main window where video capture are played 
-//	an object can be selected from this window simply by dragging his contour by mouse
-char *mainWindow("Window");
-
-// where each frame from video capture are stored
-Mat frame;
-
-vector<ObjectTracker> trk;
+// interacts with user and sets a video capture
+void setVideoCapture(VideoCapture &cap);
 
 int main(int argc, char** argv)
 {
-	unsigned int frameCnt = 0;
+	VideoCapture cap;
+	setVideoCapture(cap);
+
+	size_t frameCnt = 0;
 
 	namedWindow(mainWindow);
 	setMouseCallback(mainWindow, MouseCallBack, NULL);
-
-	//computes the following path for source videos : __FILE__/../Captures/capFileName
-	String capPath = __FILE__;
-	String capFileName = "vid4.AVI";
-	capPath = capPath.substr(0, capPath.length() - String("\\ObjectTracking\\Source.cpp").length()) + "\\Captures\\" + capFileName;
-	cout << "Capture : " << "\"" + capPath + "\"" << endl << endl;
-		
-	VideoCapture cap(capPath); 	//Source video
 	
 	if (cap.isOpened() == false)
 	{
 		cout << "Capture missing!" << endl;
 		return 1;
 	}
-	
-	frameCnt++;
+
 	cap.read(frame);
 
 	while (1)
 	{
-		// if the selection process is not in progress
-		if (!clicked)
-		{
-			frameCnt++;
-			cap.read(frame);
-			if (!frame.data)
-			{
-				return 0;
-			}
-
-			cout << endl  << "FRAME " << frameCnt << endl;
-			
-			for_each(trk.begin(), trk.end(),
-				[](ObjectTracker& tracker)
-				{
-					tracker.insertFrame(frame);
-					tracker.highlightObject(frame, true, true, true);
-					tracker.showExtraInfo();
-				}
-			);
-
-		}
 
 		imshow(mainWindow, frame);
 
 		if (waitKey(30) == 27)
 			break;
+
+		// if the selection process is not in progress
+		if (!clicked)
+		{
+			cout << endl  << "Frame " << ++frameCnt << endl;
+			
+			cap.read(frame);
+			if (!frame.data)
+				return 0;
+			
+			for (auto &t : trackers)
+			{
+				t.insertFrame(frame);
+				t.highlightObject(frame, true, true, true);
+				t.showExtraInfo();
+			}
+		}
 	}
+
+	return 0;
 }
 
-
-void MouseCallBack(int event, int x, int y, int flags, void* userdata) // designed for manual selecting of object contour
+// 	used as a callback function to select object's contour from frame
+void MouseCallBack(int event, int x, int y, int flags, void* userdata) 
 {
 	static vector<vector<Point>> contours(1);
 	static Mat initialFrame;
 
 	if (event == EVENT_LBUTTONDOWN)
 	{
-		cout << "Beginning process of selection for object number " << trk.size() + 1 << endl;
+		cout << "Beginning process of selection for object number " << trackers.size() + 1 << endl;
 		cout << "   Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
 		
 		clicked = true;
@@ -108,16 +105,19 @@ void MouseCallBack(int event, int x, int y, int flags, void* userdata) // design
 
 		clicked = false;
 		
-		_itoa_s(trk.size() + 1, cntStr, 3, 10);
+		_itoa_s(trackers.size() + 1, cntStr, 3, 10);
 		strcat_s(objectName, 12, cntStr);
 				
 		objectMat = cropSelectedObject(initialFrame, contours[0]);
 				
 
-		Object obj(objectMat, objectName);
-		obj.print();
+		Object objectSelected(objectMat, objectName);
+		objectSelected.print();
 
-		trk.push_back(ObjectTracker(obj));
+		// Instantiate a new tracker
+		ObjectTracker newTracker(objectSelected);
+
+		trackers.push_back(newTracker);
 		
 		contours[0].clear();
 	}
@@ -134,4 +134,103 @@ void MouseCallBack(int event, int x, int y, int flags, void* userdata) // design
 			contours[0].push_back(Point(x, y));
 		}
 	}
+}
+
+// computes an vector of pairs of files name and files path from within "d" directory 
+void getFilesFromDir(const char* d, vector< pair< string, string > > & f)
+{
+	FILE* pipe = NULL;
+	string pCmd = "dir /B /S " + string(d);
+	char buf[256];
+
+	if (NULL == (pipe = _popen(pCmd.c_str(), "rt")))
+	{
+		cout << "Shit" << endl;
+		return;
+	}
+
+	while (!feof(pipe))
+	{
+		if (fgets(buf, 256, pipe) != NULL)
+		{
+			string fileName = string(buf).erase(0, strlen(d) + 1);
+			fileName.pop_back();
+			string filePath = string(buf);
+			filePath.pop_back();
+			f.push_back(make_pair(fileName, filePath));
+		}
+
+	}
+
+	_pclose(pipe);
+}
+
+void setVideoCapture(VideoCapture &cap)
+{
+	vector< pair< string, string > > files;
+
+	String capturesPath = __FILE__;
+	capturesPath = capturesPath.substr(0, capturesPath.length() - 40) + "VideoCaptures";
+
+	getFilesFromDir(capturesPath.c_str(), files);
+
+	unsigned int option;
+	unsigned int i;
+	while (1)
+	{
+
+		cout << "Please select your video stream : " << endl << endl;
+		cout << " 1. Webcam" << endl;
+		cout << " 2. Enter file path" << endl;
+
+		for (i = 0; i < files.size(); i++)
+		{
+			cout << " " << i + 3 << ". " << files[i].first << endl;
+		}
+		cout << endl << "Please insert your option : ";
+		cin >> option;
+
+		if (option > files.size() + 3)
+		{
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		else
+		{
+			switch (option)
+			{
+			case 1:
+			{
+					  cap = VideoCapture(0);
+					  break;
+			}
+			case 2:
+			{
+					  string filePath;
+					  cout << " Please insert a path to a video file:" << endl;
+					  cin >> filePath;
+					  cap = VideoCapture(filePath);
+					  break;
+			}
+			default:
+			{
+					   cout << " Open " << files[i - 3].second << endl;
+					   cap = VideoCapture(files[i - 3].second);
+			}
+				break;
+			}
+		}
+
+		if (!cap.isOpened())
+		{
+			cout << "Video capture couldn't be opened!" << endl;
+			continue;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	return;
 }
