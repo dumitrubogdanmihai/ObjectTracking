@@ -28,12 +28,14 @@
  1. Download OpenCV 2.4.11 for Windows directly from [here](https://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.11/opencv-2.4.11.exe/download) or [here](http://opencv.org/downloads.html)
  2. Install opencv
  3. Set a path variable to opencv with 
-  -Variable name: OPENCV_DIR
-  -Variable value: C:\opencv\opcv2.4.11\opencv\build\x86\vc12
+   - Variable name: OPENCV_DIR
+   - Variable value: C:\opencv\opcv2.4.11\opencv\build\x86\vc12
  4. Import OpenCV_Debug.props to visual studio to configure all links with library
  5. Hit build and run to have fun 
  
  If you have any trouble to configure opencv you can consult a full guide from [here](https://marcomuraresearch.wordpress.com/2015/04/16/install-opencv-visual-studio/).
 
-
+## Further work
+ 1. Multithreading support
+ 2. Adaptive object's frame
 
