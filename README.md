@@ -26,7 +26,7 @@
  
 ## Installation 
  1. Download OpenCV 2.4.11 for Windows directly from [here](https://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.11/opencv-2.4.11.exe/download) or [here](http://opencv.org/downloads.html)
- 2. Install opencv
+ 2. Install OpenCV
  3. Set a path variable to opencv with 
    - Variable name: OPENCV_DIR
    - Variable value: C:\opencv\opcv2.4.11\opencv\build\x86\vc12
