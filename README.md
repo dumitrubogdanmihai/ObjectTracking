@@ -13,7 +13,7 @@
 
  ObjectTracker uses ObjectFinder to search for that object in a  Region Of Interest as much as possible, but if is not found it will consider whole frame.
 
- ObjectTracker interacts with MovementAnalisys to analize object's movement ( velocity and acceleration ) and predict object's position whenever it couldn't be found.<br />
+ ObjectTracker interacts with MovementAnalisys to analize object's movement ( velocity and acceleration ) and predict object's position whenever it couldn't be found.<br /><br />
  An acceleration graph and velocity graph of object positions will also be printed.
  
 ## UML Diagram 
