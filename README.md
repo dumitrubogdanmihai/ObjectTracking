@@ -20,9 +20,8 @@
 [Diagram]( http://i.imgur.com/k0L8Cpy.jpg)
 
 ## Requirements 
- 1. Windows OS 
- 2. Visual Studio '13
- 3. OpenCV 2.4.11
+ 1. Visual Studio '13
+ 2. OpenCV 2.4.11
  
 ## Installation 
  1. Download OpenCV 2.4.11 for Windows directly from [here](https://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.11/opencv-2.4.11.exe/download) or [here](http://opencv.org/downloads.html)
